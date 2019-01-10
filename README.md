@@ -17,3 +17,5 @@ For example, changes such as setting headers and a status code throw an exceptio
 
 __HasStarted__ is a useful hint to indicate if headers have been sent or the body has been written to.
 ___
+
+### 04-global exception handling using custom filters
