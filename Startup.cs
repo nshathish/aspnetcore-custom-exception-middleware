@@ -1,9 +1,11 @@
 ﻿
 namespace aspnetcore_custom_exception_middleware
 {
+    using System.Net;
     using Infrastructure.Extensions;
     using Infrastructure.Filters;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Diagnostics;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -22,14 +24,30 @@ namespace aspnetcore_custom_exception_middleware
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(config => config.Filters.Add<CustomExceptionFilter>())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             // app.UseCustomExceptionHandler();
+            app.UseExceptionHandler(options => options.Run(async context =>
+            {
+                var statusCode = (int) HttpStatusCode.InternalServerError;
+                context.Response.StatusCode = statusCode;
+                context.Response.ContentType = "application/json";
+
+                var exception = context.Features.Get<IExceptionHandlerFeature>();
+                if (exception != null)
+                    await context.Response.WriteAsync(new
+                    {
+                        ErrorCode = statusCode,
+                        ErrorMessage = exception.Error.Message,
+                        ErrorDescription = "Global exception handling using app.UseExceptionHandler"
+
+                    }.ToString());
+
+            }));
 
             app.Map("/ski", skiApp => skiApp.Run(async context => await context.Response.WriteAsync("Skip the line")));
 

@@ -19,3 +19,4 @@ __HasStarted__ is a useful hint to indicate if headers have been sent or the bod
 ___
 
 ### 04-global exception handling using custom filters
+### 05-global exception handling using `app.UseExceptionHandler`
