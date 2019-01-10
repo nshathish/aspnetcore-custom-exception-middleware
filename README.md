@@ -16,3 +16,4 @@ For example, changes such as setting headers and a status code throw an exceptio
 * May corrupt the body format. For example, writing an HTML footer to a CSS file.
 
 __HasStarted__ is a useful hint to indicate if headers have been sent or the body has been written to.
+___
