@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
+    using Models;
 
     public class ExceptionMiddleware
     {
@@ -25,7 +26,7 @@
             }
             catch (Exception e)
             {
-                _logger.LogError($"Something went wrong: {e}");
+                // _logger.LogError($"Something went wrong: {e}");
                 if (context.Response.HasStarted)
                 {
                     _logger.LogWarning("The response has already started, the Exception Middleware will not be executed");
@@ -38,13 +39,22 @@
         private static Task HandleExceptionAsync(HttpContext context, Exception e)
         {
             var statusCode = (int) HttpStatusCode.InternalServerError;
+            var message = e.Message;
+
+            if (e is HttpStatusCodeException exception)
+            {
+                statusCode = (int)exception.StatusCode;
+                message = exception.ErrorMessage;
+            }
+                
+
             context.Response.StatusCode = statusCode;
             context.Response.ContentType = "application/json";
 
             return context.Response.WriteAsync(new
             {
                 ErrorCode = statusCode,
-                ErrorMessage = e.Message
+                ErrorMessage = message
             }.ToString());
         }
     }

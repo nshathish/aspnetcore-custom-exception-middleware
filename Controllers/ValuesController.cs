@@ -3,6 +3,8 @@ namespace aspnetcore_custom_exception_middleware.Controllers
 {
     using System;
     using System.Collections.Generic;
+    using System.Net;
+    using Infrastructure.Models;
     using Microsoft.AspNetCore.Mvc;
 
 
@@ -14,7 +16,8 @@ namespace aspnetcore_custom_exception_middleware.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            throw new Exception("This is custom Exception handled globally");
+            throw new HttpStatusCodeException
+                {StatusCode = HttpStatusCode.BadRequest, ErrorMessage = "Validation Errors"};
         }
 
         // GET api/values/5

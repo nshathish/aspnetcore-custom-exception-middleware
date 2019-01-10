@@ -22,19 +22,15 @@ namespace aspnetcore_custom_exception_middleware
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(config => config.Filters.Add<CustomExceptionFilter>())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            // app.UseCustomExceptionHandler();
-
+            app.UseCustomExceptionHandler();
             app.Map("/ski", skiApp => skiApp.Run(async context => await context.Response.WriteAsync("Skip the line")));
-
             app.UseNumberChecker();
-
             app.Use(async (context, next) =>
             {
                 // await context.Response.WriteAsync("This is middleware 1");
@@ -42,7 +38,6 @@ namespace aspnetcore_custom_exception_middleware
                 // calling next after response has been sent to client is prone to errros. Please see the ReadME
                 await next();
             });
-
             app.Use(async (context, next) =>
             {
                 var item = context.Items["from_middleware_1"].ToString();
