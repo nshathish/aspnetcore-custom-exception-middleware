@@ -35,6 +35,8 @@ namespace aspnetcore_custom_exception_middleware
                 app.UseHsts();
             }
 
+            app.Map("ski", skiApp => skiApp.Run(async context => await context.Response.WriteAsync("Skip the line")));
+
             app.Use(async (context, next) =>
             {
                 await context.Response.WriteAsync("This is middleware 1");
