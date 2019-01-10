@@ -1,6 +1,7 @@
 ﻿
 namespace aspnetcore_custom_exception_middleware
 {
+    using Infrastructure.Extensions;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -35,7 +36,9 @@ namespace aspnetcore_custom_exception_middleware
                 app.UseHsts();
             }
 
-            app.Map("ski", skiApp => skiApp.Run(async context => await context.Response.WriteAsync("Skip the line")));
+            app.Map("/ski", skiApp => skiApp.Run(async context => await context.Response.WriteAsync("Skip the line")));
+
+            app.UseNumberChecker();
 
             app.Use(async (context, next) =>
             {
