@@ -7,5 +7,8 @@
     {
         public static IApplicationBuilder UseNumberChecker(this IApplicationBuilder app) =>
             app.UseMiddleware<NumberCheckerMiddleware>();
+
+        public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder app) =>
+            app.UseMiddleware<ExceptionMiddleware>();
     }
 }

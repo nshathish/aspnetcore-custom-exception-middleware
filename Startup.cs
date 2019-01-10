@@ -27,14 +27,7 @@ namespace aspnetcore_custom_exception_middleware
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
+            app.UseCustomExceptionHandler();
 
             app.Map("/ski", skiApp => skiApp.Run(async context => await context.Response.WriteAsync("Skip the line")));
 
@@ -42,23 +35,24 @@ namespace aspnetcore_custom_exception_middleware
 
             app.Use(async (context, next) =>
             {
-                await context.Response.WriteAsync("This is middleware 1");
+                // await context.Response.WriteAsync("This is middleware 1");
                 context.Items["from_middleware_1"] = "Passed From Middleware 1";
+                // calling next after response has been sent to client is prone to errros. Please see the ReadME
                 await next();
             });
 
             app.Use(async (context, next) =>
             {
                 var item = context.Items["from_middleware_1"].ToString();
-                await context.Response.WriteAsync(
-                    $"<br>This is middleware 2, and value passed from middleware 1: {item}");
+                /*await context.Response.WriteAsync(
+                    $"<br>This is middleware 2, and value passed from middleware 1: {item}");*/
                 await next();
             });
 
-            app.Run(async context => await context.Response.WriteAsync("<br>This is immediately short circuit the request pipeline."));
-
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            app.Run(async context => await context.Response.WriteAsync("<br>This is immediately short circuit the request pipeline."));
         }
     }
 }

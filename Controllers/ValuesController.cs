@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-
+﻿
 namespace aspnetcore_custom_exception_middleware.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using Microsoft.AspNetCore.Mvc;
+
+
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
@@ -14,7 +14,7 @@ namespace aspnetcore_custom_exception_middleware.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "value1", "value2" };
+            throw new Exception("This is custom Exception handled globally");
         }
 
         // GET api/values/5
